@@ -5,11 +5,12 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolb
 import folium
 import webbrowser
 import tempfile
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from geopy.geocoders import Nominatim
 import boto3
-
 from process_mesh import load_mesh
 from mesh_utils import make_figure, save_figure, save_overlay
+from mesh_utils import make_figure, save_figure
 
 DATA_DIR = os.path.join(os.path.dirname(__file__), 'data')
 OUTPUT_DIR = os.path.join(os.path.dirname(__file__), 'output')
@@ -62,6 +63,7 @@ class MeshApp(tk.Tk):
         self.toolbar = None
         self.pin = None
         self.last_data = None
+        self.pin = None
 
         open_btn = tk.Button(self, text='Open File', command=self.open_file)
         open_btn.pack(side=tk.TOP, fill=tk.X)
@@ -77,7 +79,6 @@ class MeshApp(tk.Tk):
 
         map_btn = tk.Button(self, text='Interactive Map', command=self.show_map)
         map_btn.pack(side=tk.TOP, fill=tk.X)
-
     def open_file(self):
         path = filedialog.askopenfilename(initialdir=DATA_DIR,
                                            filetypes=[('MESH files', '*.gz *.grib2 *.nc'),
@@ -86,6 +87,7 @@ class MeshApp(tk.Tk):
             return
         try:
             lats, lons, data = load_mesh(path)
+
             self.last_data = (lats, lons, data)
             self.fig = make_figure(lats, lons, data, pin=self.pin)
             if self.canvas:
@@ -98,6 +100,12 @@ class MeshApp(tk.Tk):
             self.toolbar = NavigationToolbar2Tk(self.canvas, self)
             self.toolbar.update()
             self.toolbar.pack(side=tk.TOP, fill=tk.X)
+            self.fig = make_figure(lats, lons, data, pin=self.pin)
+            if self.canvas:
+                self.canvas.get_tk_widget().destroy()
+            self.canvas = FigureCanvasTkAgg(self.fig, master=self)
+            self.canvas.draw()
+            self.canvas.get_tk_widget().pack(fill=tk.BOTH, expand=True)
         except Exception as exc:
             messagebox.showerror('Error', str(exc))
 
@@ -148,7 +156,6 @@ class MeshApp(tk.Tk):
         map_file = os.path.join(OUTPUT_DIR, 'interactive_map.html')
         m.save(map_file)
         webbrowser.open('file://' + os.path.abspath(map_file))
-
 
 def main():
     os.makedirs(DATA_DIR, exist_ok=True)
