@@ -99,6 +99,19 @@ python run_app.py
 
 3. Select the downloaded file, pin your address on the map, and export hail data visualizations.
 
+### Command-Line Examples
+
+```bash
+# generate PNG and GeoTIFF from a file
+mesh-cli plot data/file.nc --png out.png --geotiff out.tif
+
+# generate contour map
+mesh-cli contour data/file.nc contour.png
+
+# create animation from multiple files
+mesh-cli animate anim.mp4 data/file1.nc data/file2.nc
+```
+
 ---
 
 ## File Structure
@@ -108,10 +121,12 @@ MESH-MAP/
 ├── data/                  # Stores downloaded NOAA files
 ├── output/                # Saved visualizations
 ├── run_app.py             # Entry point to launch the GUI
+├── mesh_cli.py            # Command-line interface
+├── realtime.py            # Real-time downloader
 ├── mesh_gui.py            # GUI main script
 ├── mesh_utils/            # Hail plotting functions
 ├── process_mesh.py        # Backend processor
-└── README.md              # You're reading it!
+└── README                 # You're reading it!
 ```
 
 ---
@@ -121,10 +136,14 @@ MESH-MAP/
 - [x] GUI for loading and viewing MESH hail data
 - [x] Integrated NOAA S3 browser in GUI
 - [x] Address search + map overlay
-- [ ] Real-time data stream support
-- [ ] Time-based animation (e.g., 6-hour hail evolution)
-- [ ] GeoTIFF and DOCX export support
-- [ ] Automated contour map generation per swath
+- [x] Real-time data stream support
+- [x] Time-based animation (e.g., 6-hour hail evolution)
+- [x] GeoTIFF and DOCX export support
+- [x] Automated contour map generation per swath
+- [ ] Windows and Linux support
+- [x] Command-line interface mode
+- [x] Unit tests and CI pipeline
+- [x] Packaging for easy installation
 
 ---
 
