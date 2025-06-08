@@ -1,0 +1,10 @@
+boto3
+folium
+geopy
+h5py
+matplotlib
+netCDF4
+numpy
+Pillow
+rasterio
+python-docx
