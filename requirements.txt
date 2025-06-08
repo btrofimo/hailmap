@@ -8,3 +8,4 @@ numpy
 Pillow
 rasterio
 python-docx
+cfgrib

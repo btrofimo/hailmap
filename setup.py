@@ -15,6 +15,7 @@ setup(
         'Pillow',
         'rasterio',
         'python-docx',
+        'cfgrib',
     ],
     entry_points={
         'console_scripts': [
