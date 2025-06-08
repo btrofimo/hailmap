@@ -1,11 +1,15 @@
 import os
 import tkinter as tk
 from tkinter import filedialog, messagebox, simpledialog
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
+import folium
+import webbrowser
+import tempfile
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from geopy.geocoders import Nominatim
 import boto3
-
 from process_mesh import load_mesh
+from mesh_utils import make_figure, save_figure, save_overlay
 from mesh_utils import make_figure, save_figure
 
 DATA_DIR = os.path.join(os.path.dirname(__file__), 'data')
@@ -56,6 +60,9 @@ class MeshApp(tk.Tk):
 
         self.fig = None
         self.canvas = None
+        self.toolbar = None
+        self.pin = None
+        self.last_data = None
         self.pin = None
 
         open_btn = tk.Button(self, text='Open File', command=self.open_file)
@@ -70,6 +77,8 @@ class MeshApp(tk.Tk):
         export_btn = tk.Button(self, text='Export PNG', command=self.export_png)
         export_btn.pack(side=tk.TOP, fill=tk.X)
 
+        map_btn = tk.Button(self, text='Interactive Map', command=self.show_map)
+        map_btn.pack(side=tk.TOP, fill=tk.X)
     def open_file(self):
         path = filedialog.askopenfilename(initialdir=DATA_DIR,
                                            filetypes=[('MESH files', '*.gz *.grib2 *.nc'),
@@ -78,6 +87,19 @@ class MeshApp(tk.Tk):
             return
         try:
             lats, lons, data = load_mesh(path)
+
+            self.last_data = (lats, lons, data)
+            self.fig = make_figure(lats, lons, data, pin=self.pin)
+            if self.canvas:
+                self.canvas.get_tk_widget().destroy()
+                if self.toolbar:
+                    self.toolbar.destroy()
+            self.canvas = FigureCanvasTkAgg(self.fig, master=self)
+            self.canvas.draw()
+            self.canvas.get_tk_widget().pack(fill=tk.BOTH, expand=True)
+            self.toolbar = NavigationToolbar2Tk(self.canvas, self)
+            self.toolbar.update()
+            self.toolbar.pack(side=tk.TOP, fill=tk.X)
             self.fig = make_figure(lats, lons, data, pin=self.pin)
             if self.canvas:
                 self.canvas.get_tk_widget().destroy()
@@ -117,6 +139,23 @@ class MeshApp(tk.Tk):
         save_figure(self.fig, path)
         messagebox.showinfo('Saved', f'Figure saved to {path}')
 
+    def show_map(self):
+        if not self.last_data:
+            messagebox.showinfo('No data', 'Load data first')
+            return
+        lats, lons, data = self.last_data
+        with tempfile.NamedTemporaryFile(suffix='.png', delete=False) as tmp:
+            save_overlay(lats, lons, data, tmp.name)
+            overlay_path = tmp.name
+        bounds = [[float(lats.min()), float(lons.min())], [float(lats.max()), float(lons.max())]]
+        center = self.pin if self.pin else [float(lats.mean()), float(lons.mean())]
+        m = folium.Map(location=center, tiles='OpenStreetMap', zoom_start=5)
+        folium.raster_layers.ImageOverlay(overlay_path, bounds=bounds, opacity=0.6).add_to(m)
+        if self.pin:
+            folium.Marker(location=self.pin, popup='Pinned Location').add_to(m)
+        map_file = os.path.join(OUTPUT_DIR, 'interactive_map.html')
+        m.save(map_file)
+        webbrowser.open('file://' + os.path.abspath(map_file))
 
 def main():
     os.makedirs(DATA_DIR, exist_ok=True)

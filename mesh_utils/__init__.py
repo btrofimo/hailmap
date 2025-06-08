@@ -1,3 +1,5 @@
-from .hail_plot import make_figure, save_figure
+from .hail_plot import make_figure, save_figure, save_overlay
 
+__all__ = ['make_figure', 'save_figure', 'save_overlay']
+from .hail_plot import make_figure, save_figure
 __all__ = ['make_figure', 'save_figure']

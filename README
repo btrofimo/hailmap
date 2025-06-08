@@ -57,7 +57,8 @@ pip install numpy matplotlib boto3 h5py netCDF4 Pillow geopy folium
 ```bash
 git clone https://github.com/Canadian-Severe-Storms-Laboratory/MESH-MAP.git
 cd MESH-MAP
-python mesh_gui.py
+# launch the GUI
+python run_app.py
 ```
 
 ---
@@ -93,7 +94,7 @@ python mesh_gui.py
 
 2. Launch GUI:
    ```bash
-   python mesh_gui.py
+   python run_app.py
    ```
 
 3. Select the downloaded file, pin your address on the map, and export hail data visualizations.
@@ -106,6 +107,7 @@ python mesh_gui.py
 MESH-MAP/
 ├── data/                  # Stores downloaded NOAA files
 ├── output/                # Saved visualizations
+├── run_app.py             # Entry point to launch the GUI
 ├── mesh_gui.py            # GUI main script
 ├── mesh_utils/            # Hail plotting functions
 ├── process_mesh.py        # Backend processor
