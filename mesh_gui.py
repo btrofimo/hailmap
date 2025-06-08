@@ -10,7 +10,6 @@ from geopy.geocoders import Nominatim
 import boto3
 from process_mesh import load_mesh
 from mesh_utils import make_figure, save_figure, save_overlay
-from mesh_utils import make_figure, save_figure
 
 DATA_DIR = os.path.join(os.path.dirname(__file__), 'data')
 OUTPUT_DIR = os.path.join(os.path.dirname(__file__), 'output')
@@ -104,12 +103,6 @@ class MeshApp(tk.Tk):
             self.toolbar = NavigationToolbar2Tk(self.canvas, self)
             self.toolbar.update()
             self.toolbar.pack(side=tk.TOP, fill=tk.X)
-            self.fig = make_figure(lats, lons, data, pin=self.pin)
-            if self.canvas:
-                self.canvas.get_tk_widget().destroy()
-            self.canvas = FigureCanvasTkAgg(self.fig, master=self)
-            self.canvas.draw()
-            self.canvas.get_tk_widget().pack(fill=tk.BOTH, expand=True)
         except Exception as exc:
             messagebox.showerror('Error', str(exc))
 
