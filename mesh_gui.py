@@ -80,9 +80,13 @@ class MeshApp(tk.Tk):
         map_btn = tk.Button(self, text='Interactive Map', command=self.show_map)
         map_btn.pack(side=tk.TOP, fill=tk.X)
     def open_file(self):
-        path = filedialog.askopenfilename(initialdir=DATA_DIR,
-                                           filetypes=[('MESH files', '*.gz *.grib2 *.nc'),
-                                                      ('All files', '*.*')])
+        try:
+            import cfgrib  # noqa: F401
+            types = [('MESH files', '*.gz *.grib2 *.nc'), ('All files', '*.*')]
+        except Exception:
+            types = [('MESH files', '*.gz *.nc'), ('All files', '*.*')]
+
+        path = filedialog.askopenfilename(initialdir=DATA_DIR, filetypes=types)
         if not path:
             return
         try:

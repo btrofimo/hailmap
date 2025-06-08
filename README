@@ -19,6 +19,7 @@ MESH-MAP is a radar-based hail detection and visualization tool designed for **m
 - 🗌 Hail swath viewer + image export
 - 🚀 New: **NOAA S3 File Browser** integrated into the GUI
 - 📍 New: **Address-based map pinning with hail swath overlays**
+- 🗄 Supports NetCDF (`.nc`, `.gz`) and GRIB2 (`.grib2`) files
 
 ---
 
@@ -47,7 +48,7 @@ MESH-MAP is a radar-based hail detection and visualization tool designed for **m
 
 ```bash
 brew install awscli hdf5 netcdf
-pip install numpy matplotlib boto3 h5py netCDF4 Pillow geopy folium
+pip install numpy matplotlib boto3 h5py netCDF4 Pillow geopy folium cfgrib
 ```
 
 ---
@@ -60,6 +61,12 @@ cd MESH-MAP
 # launch the GUI
 python run_app.py
 ```
+
+### Supported File Types
+
+MESH-MAP opens NetCDF files (`.nc` or gzipped `.gz`) and GRIB2 files (`.grib2`).
+Gzipped files are decompressed automatically. GRIB2 support requires the
+`cfgrib` package.
 
 ---
 
@@ -77,7 +84,7 @@ python run_app.py
 
 | Feature             | Description                                                                 |
 |---------------------|-----------------------------------------------------------------------------|
-| File Chooser        | Select `.gz` or `.grib2` MRMS MESH file locally                             |
+| File Chooser        | Select `.gz`, `.nc` or `.grib2` MRMS MESH file locally                             |
 | S3 Browser Panel    | Navigate and download MESH files from NOAA S3 using boto3                   |
 | Address Search      | Enter an address to drop a pin and center the map                          |
 | Canvas Viewer       | Plots hail swath using Matplotlib in Tkinter                               |
