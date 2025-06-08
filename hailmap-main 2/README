@@ -1,0 +1,167 @@
+# MESH-MAP (macOS + GUI Edition)
+
+**Maximum Estimated Size of Hail – Monitoring and Analysis Program (U.S. CONUS - MRMS Edition)**
+
+---
+
+## Overview
+
+MESH-MAP is a radar-based hail detection and visualization tool designed for **macOS** systems using **NOAA MRMS public radar data**. This version includes a **user-friendly GUI** for loading, viewing, and exporting MESH hail data. Ideal for meteorologists, engineers, and claims experts analyzing U.S. hail impact using the **public AWS S3 dataset**.
+
+---
+
+## Highlights
+
+- ✅ macOS-compatible (Intel & M1/M2 chips)
+- 🌪 Uses **NOAA MRMS data** (MESH, Hail Swaths, Probability of Severe Hail)
+- 💻 Graphical User Interface (built with Tkinter)
+- 📦 No AWS login needed (public S3 access)
+- 🗌 Hail swath viewer + image export
+- 🚀 New: **NOAA S3 File Browser** integrated into the GUI
+- 📍 New: **Address-based map pinning with hail swath overlays**
+- 🗄 Supports NetCDF (`.nc`, `.gz`) and GRIB2 (`.grib2`) files
+
+---
+
+## MRMS Data Source
+
+- **Name**: NOAA Multi-Radar/Multi-Sensor System (MRMS)
+- **Type**: Public S3 Bucket
+- **ARN**: `arn:aws:s3:::noaa-mrms-pds`
+- **Region**: `us-east-1`
+- **Access**:
+  ```bash
+  aws s3 ls --no-sign-request s3://noaa-mrms-pds/MESHMax/
+  ```
+
+---
+
+## Installation
+
+### 1. Prerequisites (macOS)
+
+- macOS Monterey or newer
+- Homebrew installed: [https://brew.sh](https://brew.sh)
+- Python 3.9+ with Tkinter
+
+### 2. Install Required Packages
+
+```bash
+brew install awscli hdf5 netcdf
+pip install numpy matplotlib boto3 h5py netCDF4 Pillow geopy folium cfgrib
+```
+
+---
+
+## Project Setup
+
+```bash
+git clone https://github.com/Canadian-Severe-Storms-Laboratory/MESH-MAP.git
+cd MESH-MAP
+# launch the GUI
+python run_app.py
+```
+
+### Supported File Types
+
+MESH-MAP opens NetCDF files (`.nc` or gzipped `.gz`) and GRIB2 files (`.grib2`).
+Gzipped files are decompressed automatically. GRIB2 support requires the
+`cfgrib` package.
+
+---
+
+## GUI Features
+
+### 🔍 **Main Functions**
+
+- **Browse MRMS files locally**
+- **Download MRMS files from NOAA S3 via integrated browser**
+- **Load and visualize MESH data**
+- **Pin address and overlay hail swaths on basemap (OpenStreetMap)**
+- **Export hail map to PNG**
+
+### 🖼 **UI Layout**
+
+| Feature             | Description                                                                 |
+|---------------------|-----------------------------------------------------------------------------|
+| File Chooser        | Select `.gz`, `.nc` or `.grib2` MRMS MESH file locally                             |
+| S3 Browser Panel    | Navigate and download MESH files from NOAA S3 using boto3                   |
+| Address Search      | Enter an address to drop a pin and center the map                          |
+| Canvas Viewer       | Plots hail swath using Matplotlib in Tkinter                               |
+| Export Button       | Save current view as image                                                  |
+
+---
+
+## Example Usage
+
+1. **Download from S3 in GUI** (or via CLI):
+   ```bash
+   aws s3://noaa-mrms-pds/MESH_Max_1440min_00.50/ ./data/
+   ```
+
+2. Launch GUI:
+   ```bash
+   python run_app.py
+   ```
+
+3. Select the downloaded file, pin your address on the map, and export hail data visualizations.
+
+### Command-Line Examples
+
+```bash
+# generate PNG and GeoTIFF from a file
+mesh-cli plot data/file.nc --png out.png --geotiff out.tif
+
+# generate contour map
+mesh-cli contour data/file.nc contour.png
+
+# create animation from multiple files
+mesh-cli animate anim.mp4 data/file1.nc data/file2.nc
+```
+
+---
+
+## File Structure
+
+```
+MESH-MAP/
+├── data/                  # Stores downloaded NOAA files
+├── output/                # Saved visualizations
+├── run_app.py             # Entry point to launch the GUI
+├── mesh_cli.py            # Command-line interface
+├── realtime.py            # Real-time downloader
+├── mesh_gui.py            # GUI main script
+├── mesh_utils/            # Hail plotting functions
+├── process_mesh.py        # Backend processor
+└── README                 # You're reading it!
+```
+
+---
+
+## Roadmap
+
+- [x] GUI for loading and viewing MESH hail data
+- [x] Integrated NOAA S3 browser in GUI
+- [x] Address search + map overlay
+- [x] Real-time data stream support
+- [x] Time-based animation (e.g., 6-hour hail evolution)
+- [x] GeoTIFF and DOCX export support
+- [x] Automated contour map generation per swath
+- [ ] Windows and Linux support
+- [x] Command-line interface mode
+- [x] Unit tests and CI pipeline
+- [x] Packaging for easy installation
+
+---
+
+## License
+
+This work is licensed under a Creative Commons Attribution-NonCommercial-ShareAlike 4.0 License.  
+See [LICENSE](https://creativecommons.org/licenses/by-nc-sa/4.0/)
+
+---
+
+## Credits
+
+- **Original Development**: Canadian Severe Storms Laboratory (CSSL)
+- **Radar Source**: [NOAA MRMS Public S3 Bucket](https://registry.opendata.aws/noaa-mrms/)

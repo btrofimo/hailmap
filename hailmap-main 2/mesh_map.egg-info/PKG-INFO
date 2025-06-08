@@ -1,0 +1,15 @@
+Metadata-Version: 2.4
+Name: mesh-map
+Version: 0.1.0
+Requires-Dist: boto3
+Requires-Dist: folium
+Requires-Dist: geopy
+Requires-Dist: h5py
+Requires-Dist: matplotlib
+Requires-Dist: netCDF4
+Requires-Dist: numpy
+Requires-Dist: Pillow
+Requires-Dist: rasterio
+Requires-Dist: python-docx
+Requires-Dist: cfgrib
+Dynamic: requires-dist

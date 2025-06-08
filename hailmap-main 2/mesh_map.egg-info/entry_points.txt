@@ -1,0 +1,4 @@
+[console_scripts]
+mesh-app = run_app:main
+mesh-cli = mesh_cli:main
+mesh-watch = realtime:main
