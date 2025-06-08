@@ -13,6 +13,8 @@ from process_mesh import load_mesh
 
 def make_figure(lats, lons, data, pin: Optional[Tuple[float, float]] = None):
     """Return a Matplotlib figure showing the hail swath."""
+    # mask values below 2 to avoid plotting insignificant hail sizes
+    data = np.where(data >= 2, data, np.nan)
     fig, ax = plt.subplots(figsize=(8, 6))
     mesh = ax.pcolormesh(lons, lats, data, cmap='turbo', shading='auto')
     fig.colorbar(mesh, ax=ax, label='MESH (inches)')
@@ -29,6 +31,7 @@ def save_figure(fig, path: str):
 
 def save_overlay(lats, lons, data, path: str):
     """Save transparent image for use as map overlay."""
+    data = np.where(data >= 2, data, np.nan)
     fig, ax = plt.subplots(figsize=(8, 6))
     mesh = ax.pcolormesh(lons, lats, data, cmap='turbo', shading='auto')
     ax.axis('off')
@@ -40,6 +43,7 @@ def save_overlay(lats, lons, data, path: str):
 
 def save_geotiff(lats, lons, data, path: str):
     """Save data array to GeoTIFF with geographic bounds."""
+    data = np.where(data >= 2, data, 0)
     transform = from_bounds(float(lons.min()), float(lats.min()),
                             float(lons.max()), float(lats.max()),
                             data.shape[1], data.shape[0])
@@ -59,6 +63,7 @@ def save_geotiff(lats, lons, data, path: str):
 
 def make_contour(lats, lons, data, pin: Optional[Tuple[float, float]] = None):
     """Return a Matplotlib figure with contour lines."""
+    data = np.where(data >= 2, data, np.nan)
     fig, ax = plt.subplots(figsize=(8, 6))
     cs = ax.contour(lons, lats, data, colors='k')
     ax.clabel(cs, inline=1, fontsize=8)
@@ -74,6 +79,7 @@ def save_animation(files: List[str], path: str, pin: Optional[Tuple[float, float
     frames = []
     for f in files:
         lats, lons, data = load_mesh(f)
+        data = np.where(data >= 2, data, np.nan)
         fig = make_figure(lats, lons, data, pin=pin)
         frames.append([plt.imshow(data, animated=True)])
         plt.close(fig)
